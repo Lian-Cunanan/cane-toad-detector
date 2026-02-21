@@ -461,12 +461,19 @@ async function detect() {
 // ---------------------------------------------------------------------------
 async function init() {
   try {
-    // 1. Load class names
+    // 1. Load class names (optional — falls back to numeric labels if missing)
     setOverlay('Loading class names...');
-    const namesResp = await fetch(NAMES_URL);
-    if (!namesResp.ok) throw new Error(`Could not load class_names.json (${namesResp.status})`);
-    classNames = await namesResp.json();
-    console.log('[INFO] Class names:', classNames);
+    try {
+      const namesResp = await fetch(NAMES_URL);
+      if (namesResp.ok) {
+        classNames = await namesResp.json();
+        console.log('[INFO] Class names:', classNames);
+      } else {
+        console.warn('[WARN] class_names.json not found — using numeric labels.');
+      }
+    } catch (e) {
+      console.warn('[WARN] Could not load class_names.json:', e.message);
+    }
 
     // 2. Load ONNX model
     setOverlay('Loading ONNX model (may take ~30s on first visit)...');
