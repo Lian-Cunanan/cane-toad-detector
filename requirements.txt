@@ -1,0 +1,13 @@
+# Cane Toad Detector — Python Dependencies
+#
+# Install with:
+#   pip install -r requirements.txt
+#
+# On Raspberry Pi 4 (ARM64), if PyTorch fails to install automatically:
+#   pip install torch torchvision --index-url https://download.pytorch.org/whl/cpu
+#   pip install -r requirements.txt
+
+ultralytics>=8.0.0
+opencv-python>=4.8.0
+numpy>=1.24.0
+flask>=3.0.0

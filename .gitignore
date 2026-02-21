@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+
+# Virtual environment
+venv/
+env/
+.venv/
+
+# YOLOv8 output (created during inference/training)
+runs/
+
+# Environment variables
+.env
+
+# OS files
+.DS_Store
+Thumbs.db
+nul
+
+# Temporary tool files
+tmpclaude-*
+
+# IDE
+.vscode/
+.idea/
+*.swp
