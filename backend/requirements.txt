@@ -1,0 +1,32 @@
+# =============================================================================
+# Backend Requirements — Flask API Server
+# =============================================================================
+#
+# Install on Raspberry Pi:
+#   pip install -r requirements.txt
+
+# Web Framework
+Flask>=3.0.0
+flask-cors>=4.0.0
+
+# Database
+Flask-SQLAlchemy>=3.1.1
+
+# Authentication
+Flask-JWT-Extended>=4.6.0
+Werkzeug>=3.0.0
+
+# WebSocket for real-time communication
+flask-socketio>=5.3.5
+python-socketio>=5.10.0
+python-engineio>=4.8.0
+
+# HTTP client (optional, for ESP8266 simulation)
+requests>=2.31.0
+
+# Computer Vision (for camera streaming)
+opencv-python>=4.8.0
+numpy>=1.24.0
+
+# ONNX Runtime for detector
+onnxruntime>=1.16.0

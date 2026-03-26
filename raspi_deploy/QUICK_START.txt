@@ -1,0 +1,144 @@
+===============================================================================
+QUICK START - Raspberry Pi Deployment (WiFi Hotspot Mode)
+===============================================================================
+
+Fastest path to deploy Cane Toad Detector with WiFi hotspot.
+
+===============================================================================
+STEP 1: Copy Files to Pi
+===============================================================================
+
+From your Windows computer:
+
+    scp -r raspi_deploy backend best.pt pi@raspberrypi.local:~/
+
+Connect to Pi:
+
+    ssh pi@raspberrypi.local
+    cd ~/raspi_deploy
+    mv ~/best.pt .
+    mv ~/backend ../backend
+
+===============================================================================
+STEP 2: Run Setup Scripts
+===============================================================================
+
+Install dependencies:
+
+    chmod +x setup.sh setup_hotspot.sh diagnostics.sh
+    ./setup.sh
+
+Configure WiFi hotspot:
+
+    sudo ./setup_hotspot.sh
+
+Follow prompts and reboot when asked:
+
+    sudo reboot
+
+===============================================================================
+STEP 3: Configure Mobile App
+===============================================================================
+
+After Pi reboots:
+
+1. Connect phone WiFi to: CaneToadDetector
+   Password: canetoad2024
+
+2. Open Cane Toad Detector mobile app
+
+3. Tap: ⚙️ Connection Settings
+
+4. Select preset: Raspberry Pi Hotspot (192.168.4.1:5000)
+
+5. Tap: TEST CONNECTION (should show ✅)
+
+6. Tap: SAVE
+
+7. Register account or login
+
+8. Done! View dashboard and camera feeds
+
+===============================================================================
+VERIFICATION
+===============================================================================
+
+On Raspberry Pi, check status:
+
+    ./diagnostics.sh
+
+Should show all green checkmarks (✓)
+
+===============================================================================
+TROUBLESHOOTING
+===============================================================================
+
+Hotspot not visible:
+    sudo nmcli connection up CaneToadHotspot
+
+Backend not running:
+    sudo systemctl start cane-toad-backend
+    sudo journalctl -u cane-toad-backend -f
+
+Camera not working:
+    sudo raspi-config → Interface Options → Camera → Enable
+    sudo reboot
+
+Mobile app can't connect:
+    Check phone is connected to CaneToadDetector WiFi
+    Test in browser: http://192.168.4.1:5000
+
+===============================================================================
+DEFAULT SETTINGS
+===============================================================================
+
+WiFi SSID:         CaneToadDetector
+WiFi Password:     canetoad2024
+Pi IP Address:     192.168.4.1
+Backend Port:      5000
+Backend URL:       http://192.168.4.1:5000
+
+===============================================================================
+SECURITY WARNING
+===============================================================================
+
+Change default password before field deployment:
+
+    sudo nmcli connection modify CaneToadHotspot \
+      802-11-wireless-security.psk "YourNewPassword123"
+    sudo nmcli connection up CaneToadHotspot
+
+===============================================================================
+USEFUL COMMANDS
+===============================================================================
+
+View backend logs:
+    sudo journalctl -u cane-toad-backend -f
+
+Restart backend:
+    sudo systemctl restart cane-toad-backend
+
+Restart hotspot:
+    sudo nmcli connection down CaneToadHotspot
+    sudo nmcli connection up CaneToadHotspot
+
+Test detector manually:
+    cd ~/raspi_deploy
+    source venv/bin/activate
+    python detector_raspi.py --headless --skip 2
+
+Run diagnostics:
+    ./diagnostics.sh
+
+===============================================================================
+DONE!
+===============================================================================
+
+Your system is ready for field deployment.
+
+For detailed documentation, see:
+- DEPLOY.md          (Complete deployment guide)
+- HOTSPOT_SETUP.md   (WiFi hotspot details)
+- README.md          (Quick reference)
+
+===============================================================================
