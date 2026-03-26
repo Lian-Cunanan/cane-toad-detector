@@ -19,8 +19,9 @@ When deployed on Raspberry Pi 4, a GPIO stub is ready to trigger **3 servo motor
 
 ## Features
 
+- **Browser / Mobile app** (`docs/index.html`) — runs entirely in your browser using ONNX Runtime Web; no install required
 - **Live detection** with bounding boxes and confidence scores
-- **Browser UI** (Flask) — dark-themed, live sidebar with per-detection confidence bars
+- **Flask web app** — dark-themed browser UI with live sidebar and per-detection confidence bars
 - **Raspberry Pi 4 ready** — optimised for ARM64 with frame-skip and buffer controls
 - **Servo motor stub** — GPIO integration point already in place for hardware deployment
 - **Clean terminal output** — frame-by-frame detection logs with class, confidence and bbox
@@ -31,19 +32,42 @@ When deployed on Raspberry Pi 4, a GPIO stub is ready to trigger **3 servo motor
 
 ```
 cane-toad-detector/
-├── best.pt              # Trained YOLOv8 model
-├── app.py               # Flask web app (browser UI)
+├── best.pt              # Trained YOLOv8 model (PyTorch, for Flask/Pi)
+├── app.py               # Flask web app (browser UI, server-side inference)
 ├── detector.py          # Raspberry Pi 4 standalone script
 ├── test_laptop.py       # Quick webcam test (no server needed)
 ├── requirements.txt     # Python dependencies
 ├── templates/
-│   └── index.html       # Web UI
-└── .gitignore
+│   └── index.html       # Flask web UI template
+└── docs/
+    ├── index.html       # Browser/mobile app (client-side ONNX inference)
+    ├── best.onnx        # Exported ONNX model (for browser inference)
+    └── class_names.json # Class label mapping
 ```
 
 ---
 
 ## Quick Start
+
+### Option A — Browser / Mobile App (no install required)
+
+The `docs/` folder contains a fully self-contained web app that runs **entirely in your browser** — no Python, no server, no install needed.
+
+**Online (GitHub Pages):**  
+👉 [https://lian-cunanan.github.io/cane-toad-detector/](https://lian-cunanan.github.io/cane-toad-detector/)
+
+**Locally:**
+```bash
+cd docs
+python -m http.server 8080
+# then open http://localhost:8080 in your browser
+```
+
+> Your browser will ask for webcam permission. Detection runs locally on your device using ONNX Runtime Web — no data is sent anywhere.
+
+---
+
+### Option B — Flask Server App (Python required)
 
 ### 1. Clone & install
 
@@ -62,11 +86,13 @@ pip install -r requirements.txt
 
 | Mode | Command | Best for |
 |---|---|---|
-| Browser web app | `python app.py` | Laptop demo / testing |
+| Browser / Mobile app | `cd docs && python -m http.server 8080` | Any device with a browser |
+| Flask web app | `python app.py` | Laptop demo / testing |
 | Standalone window | `python test_laptop.py` | Quick local test |
 | Raspberry Pi | `python detector.py` | Hardware deployment |
 
-> **Web app:** After running `python app.py`, open **http://localhost:5000** in your browser.
+> **Flask app:** After running `python app.py`, open **http://localhost:5000** in your browser.  
+> **Mobile app:** After running the http.server command, open **http://localhost:8080** in your browser.
 
 ---
 
