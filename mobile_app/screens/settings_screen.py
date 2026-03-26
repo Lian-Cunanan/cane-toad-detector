@@ -184,7 +184,7 @@ class SettingsScreen(Screen):
         
         def do_test(dt):
             try:
-                response = requests.get(f"{url}/api/auth/register", timeout=3)
+                response = requests.get(f"{url}/api/status", timeout=3)
                 if response.status_code in [200, 400, 405]:  # Expected responses
                     self.connection_status = f'✅ Connected to {url}'
                 else:
@@ -231,4 +231,4 @@ class SettingsScreen(Screen):
     
     def go_back(self):
         """Navigate back to previous screen."""
-        self.manager.current = 'login'
+        self.manager.current = 'dashboard'

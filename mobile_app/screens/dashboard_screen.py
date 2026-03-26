@@ -20,7 +20,7 @@ Builder.load_string("""
         MDTopAppBar:
             title: 'Cane Toad Detector'
             left_action_items: [['menu', lambda x: None]]
-            right_action_items: [['camera', lambda x: root.go_to_camera()], ['logout', lambda x: root.do_logout()]]
+            right_action_items: [['camera', lambda x: root.go_to_camera()]]
         
         # Scrollable Content
         ScrollView:
@@ -38,7 +38,7 @@ Builder.load_string("""
                     height: dp(80)
                     
                     MDLabel:
-                        text: f'Welcome, {app.username}'
+                        text: 'Cane Toad Detector'
                         font_style: 'H6'
                         theme_text_color: 'Primary'
                     
@@ -363,10 +363,6 @@ class DashboardScreen(Screen):
     def go_to_camera(self):
         """Navigate to camera screen."""
         self.manager.current = 'camera'
-    
-    def do_logout(self):
-        """Logout user."""
-        App.get_running_app().logout()
     
     def reset_batch(self):
         """Reset current batch."""

@@ -5,7 +5,6 @@
 # Cross-platform mobile app for monitoring and controlling the detector system.
 #
 # Features:
-#   - Login/Registration screens
 #   - Real-time dashboard with progress tracking
 #   - Dual camera feeds (Cage View & Trap View)
 #   - Operational phase monitoring
@@ -37,8 +36,6 @@ import requests
 import socketio
 from typing import Optional
 
-from screens.login_screen import LoginScreen
-from screens.register_screen import RegisterScreen
 from screens.dashboard_screen import DashboardScreen
 from screens.camera_screen import CameraScreen
 from screens.settings_screen import SettingsScreen
@@ -62,8 +59,6 @@ class CaneToadDetectorApp(MDApp):
     
     # App properties
     backend_url = StringProperty('http://192.168.4.1:5000')  # Default Pi hotspot IP
-    username = StringProperty('')
-    access_token = StringProperty('')
     is_connected = BooleanProperty(False)
     
     def __init__(self, **kwargs):
@@ -89,8 +84,6 @@ class CaneToadDetectorApp(MDApp):
         self.screen_manager = ScreenManager(transition=SlideTransition())
         
         # Add screens
-        self.screen_manager.add_widget(LoginScreen(name='login'))
-        self.screen_manager.add_widget(RegisterScreen(name='register'))
         self.screen_manager.add_widget(DashboardScreen(name='dashboard'))
         self.screen_manager.add_widget(CameraScreen(name='camera'))
         self.screen_manager.add_widget(SettingsScreen(name='settings'))
@@ -101,6 +94,10 @@ class CaneToadDetectorApp(MDApp):
         """Called when app starts."""
         print(f"[INFO] Cane Toad Detector app started")
         print(f"[INFO] Backend URL: {self.backend_url}")
+        
+        # Connect to backend immediately (no login required)
+        self.api_client.connect_websocket()
+        self.is_connected = True
         
     def on_stop(self):
         """Called when app stops."""
@@ -128,110 +125,6 @@ class CaneToadDetectorApp(MDApp):
                 print(f"[INFO] Using default backend URL: {self.backend_url}")
         except Exception as e:
             print(f"[WARNING] Failed to load settings: {e}")
-    
-    # =========================================================================
-    # Authentication Methods
-    # =========================================================================
-    
-    def login(self, username: str, password: str):
-        """
-        Attempt to login with credentials.
-        
-        Args:
-            username: User's username
-            password: User's password
-        """
-        if not username or not password:
-            self.show_error("Please enter both username and password")
-            return
-        
-        # Show loading
-        self.show_loading("Logging in...")
-        
-        # Attempt login via API
-        def login_callback(success, data):
-            def ui_update(dt):
-                self.dismiss_dialog()
-                
-                if success:
-                    self.username = username
-                    self.access_token = data.get('access_token', '')
-                    self.api_client.set_token(self.access_token)
-                    
-                    # Connect WebSocket
-                    self.api_client.connect_websocket()
-                    self.is_connected = True
-                    
-                    # Navigate to dashboard
-                    self.screen_manager.current = 'dashboard'
-                    self.show_success(f"Welcome, {username}!")
-                    
-                else:
-                    error_msg = data.get('error', 'Login failed')
-                    self.show_error(error_msg)
-            
-            Clock.schedule_once(ui_update, 0)
-        
-        self.api_client.login(username, password, callback=login_callback)
-    
-    def register(self, username: str, password: str, confirm_password: str):
-        """
-        Register a new user account.
-        
-        Args:
-            username: Desired username
-            password: Desired password
-            confirm_password: Password confirmation
-        """
-        # Validation
-        if not username or not password or not confirm_password:
-            self.show_error("All fields are required")
-            return
-        
-        if len(username) < 3:
-            self.show_error("Username must be at least 3 characters")
-            return
-        
-        if len(password) < 6:
-            self.show_error("Password must be at least 6 characters")
-            return
-        
-        if password != confirm_password:
-            self.show_error("Passwords do not match")
-            return
-        
-        # Show loading
-        self.show_loading("Creating account...")
-        
-        # Attempt registration via API
-        def register_callback(success, data):
-            def ui_update(dt):
-                self.dismiss_dialog()
-                
-                if success:
-                    self.show_success("Account created! Please log in.")
-                    self.screen_manager.current = 'login'
-                else:
-                    error_msg = data.get('error', 'Registration failed')
-                    self.show_error(error_msg)
-            
-            Clock.schedule_once(ui_update, 0)
-        
-        self.api_client.register(username, password, callback=register_callback)
-    
-    def logout(self):
-        """Logout current user."""
-        if self.api_client:
-            self.api_client.logout()
-            self.api_client.disconnect()
-        
-        self.username = ''
-        self.access_token = ''
-        self.is_connected = False
-        
-        # Return to login screen
-        self.screen_manager.current = 'login'
-        self.show_info("Logged out successfully")
     
     # =========================================================================
     # Dialog Methods
