@@ -32,6 +32,47 @@ import numpy as np
 from ultralytics import YOLO
 
 
+def list_available_cameras(max_test: int = 10) -> list:
+    """Detect available camera devices by testing indices 0 through max_test-1."""
+    available = []
+    print("[INFO] Scanning for available cameras...")
+    for i in range(max_test):
+        cap = cv2.VideoCapture(i)
+        if cap.isOpened():
+            ret, _ = cap.read()
+            if ret:
+                available.append(i)
+                print(f"  ✓ Camera {i} found")
+            cap.release()
+    return available
+
+
+def select_camera_interactive() -> int:
+    """Let user interactively choose from available cameras."""
+    cameras = list_available_cameras()
+    
+    if not cameras:
+        print("[ERROR] No cameras found!", file=sys.stderr)
+        sys.exit(1)
+    
+    if len(cameras) == 1:
+        print(f"[INFO] Only one camera found. Using camera {cameras[0]}.")
+        return cameras[0]
+    
+    print(f"\n[INFO] Found {len(cameras)} camera(s): {cameras}")
+    while True:
+        try:
+            choice = input(f"Select camera index {cameras}: ")
+            camera_index = int(choice)
+            if camera_index in cameras:
+                return camera_index
+            else:
+                print(f"[ERROR] Invalid choice. Please select from {cameras}")
+        except (ValueError, KeyboardInterrupt):
+            print("\n[INFO] Selection cancelled.")
+            sys.exit(0)
+
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Cane Toad Detector — Laptop Test")
     parser.add_argument(
@@ -39,8 +80,12 @@ def parse_args() -> argparse.Namespace:
         help="Path to YOLOv8 .pt model file (default: best.pt)"
     )
     parser.add_argument(
-        "--camera", type=int, default=0,
-        help="Camera device index (default: 0 = built-in webcam)"
+        "--camera", type=int, default=None,
+        help="Camera device index (default: auto-detect and select)"
+    )
+    parser.add_argument(
+        "--list-cameras", action="store_true",
+        help="List all available cameras and exit"
     )
     parser.add_argument(
         "--width", type=int, default=640,
@@ -147,6 +192,21 @@ def print_detections(results, class_names: dict, frame_index: int) -> None:
 
 def main() -> None:
     args = parse_args()
+
+    # Handle --list-cameras flag
+    if args.list_cameras:
+        cameras = list_available_cameras()
+        if cameras:
+            print(f"\n[INFO] Available cameras: {cameras}")
+            print("[INFO] Use --camera <index> to select a specific camera.")
+        else:
+            print("\n[ERROR] No cameras found.")
+        sys.exit(0)
+
+    # Auto-select camera if not specified
+    if args.camera is None:
+        args.camera = select_camera_interactive()
+        print(f"[INFO] Selected camera {args.camera}\n")
 
     model       = load_model(args.model)
     cap         = open_camera(args.camera, args.width, args.height)

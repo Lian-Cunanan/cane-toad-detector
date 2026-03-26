@@ -1,0 +1,30 @@
+# =============================================================================
+# Raspberry Pi Requirements - Cane Toad Detector
+# =============================================================================
+#
+# Install with:
+#   pip install -r requirements.txt
+#
+# =============================================================================
+
+# Core Dependencies
+numpy>=1.21.0
+opencv-python>=4.8.0
+onnxruntime>=1.16.0
+
+# Flask Backend (if running backend on Pi)
+flask>=3.0.0
+flask-cors>=4.0.0
+flask-jwt-extended>=4.6.0
+flask-socketio>=5.3.5
+python-socketio>=5.10.0
+
+# Database
+sqlalchemy>=2.0.0
+
+# Utilities
+requests>=2.31.0
+pillow>=10.0.0
+
+# Optional: For model conversion (can uninstall after)
+# ultralytics>=8.0.0

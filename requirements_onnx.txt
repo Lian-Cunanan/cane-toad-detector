@@ -1,0 +1,19 @@
+# Cane Toad Detector — Python Dependencies (ONNX Version)
+#
+# This version uses ONNX Runtime instead of PyTorch/Ultralytics
+# to avoid illegal instruction errors on older CPUs.
+#
+# Install with:
+#   pip install -r requirements_onnx.txt
+#
+# Works on:
+#   - Windows laptops (any CPU)
+#   - Raspberry Pi 4 (ARM64)
+#   - Linux systems with older CPUs
+
+opencv-python>=4.8.0
+numpy>=1.24.0
+onnxruntime>=1.16.0
+
+# Optional: Flask if you want to run the web interface later
+# flask>=3.0.0

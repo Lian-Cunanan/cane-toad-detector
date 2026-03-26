@@ -1,0 +1,26 @@
+# =============================================================================
+# Mobile App Requirements — Kivy Application
+# =============================================================================
+#
+# Install on Windows (development):
+#   pip install -r requirements.txt
+#
+# For Android deployment, use buildozer.spec
+
+# Kivy Framework
+kivy[base]>=2.2.1
+kivymd>=1.1.1
+
+# HTTP client
+requests>=2.31.0
+
+# Image processing (for MJPEG viewer)
+Pillow>=10.0.0
+
+# WebSocket client
+python-socketio[client]>=5.10.0
+websocket-client>=1.6.4
+
+# For building Android APK (use buildozer on Linux)
+# buildozer>=1.5.0
+# python-for-android>=2023.11.0
